@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+# 🎙️ Spotify Podcast Explorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> **Application Fullstack développée dans le cadre du module "Développement Front-End & Architecture".**
+> Ce projet sert de socle technique pour l'intégration de services externes (Python) et la mise en place d'une pipeline CI/CD.
 
-## Available Scripts
+## 📝 Description du Projet
 
-In the project directory, you can run:
+Spotify Podcast Explorer est une plateforme web permettant de rechercher, filtrer et explorer les meilleurs podcasts disponibles sur Spotify.
 
-### `npm start`
+Le projet est divisé en deux parties :
+1. **Frontend (React / Redux Toolkit) :** L'interface utilisateur interactive. La gestion d'état est centralisée via un store Redux unique.
+2. **Backend (Proxy Node.js / Express) :** Une API intermédiaire sécurisée (CORS, Rate Limiting) chargée de masquer les clés secrètes et d'interroger l'API publique de Spotify.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🔧 Stack Technique
 
-### `npm test`
+* **Frontend :** React.js, Redux Toolkit, React-Redux
+* **Backend :** Node.js, Express.js
+* **Qualité & Tests :** Jest / React Testing Library
+* **Déploiement :** Vercel pour le Front, Render pour le Back
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ⚙️ Installation & Lancement (Local)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prérequis
+* Node.js (v16 ou supérieur)
+* L'extension navigateur **Redux DevTools** installée pour le débogage
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Configuration du Backend (Proxy)
+```bash
+cd backend
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Créez un fichier `.env` à la racine du dossier `backend` :
+```env
+PORT=5000
+SPOTIFY_CLIENT_ID=votre_client_id
+SPOTIFY_CLIENT_SECRET=votre_client_secret
+```
 
-### `npm run eject`
+Lancez le serveur :
+```bash
+node index.js
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 2. Configuration du Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+L'application sera accessible sur `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🗂️ Architecture du State Redux
+```javascript
+{
+  podcasts: {
+    items: [],        // Liste des podcasts récupérés depuis l'API
+    loading: false,   // État de chargement
+    error: null,      // Gestion des erreurs
+    searchQuery: "",  // Requête de recherche
+    category: "all"   // Catégorie sélectionnée
+  }
+}
+```
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🔌 API Reference (Pour l'équipe Python)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### `GET /api/podcasts`
+* **Description :** Récupère les podcasts depuis l'API Spotify.
+* **Paramètres :** `?search=technology`
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### `GET /api/export`
+* **Description :** Renvoie un résumé JSON structuré pour l'automatisation Python.
+* **Exemple de réponse :**
+```json
+{
+  "exportDate": "2026-03-24T12:00:00Z",
+  "totalItems": 42,
+  "topResults": []
+}
+```
